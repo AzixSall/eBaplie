@@ -1,6 +1,8 @@
 using eBaplie.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -30,6 +33,24 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Set up custom content types - associating file extension to MIME type
+// Bring in the following 'using' statement:
+// using Microsoft.AspNetCore.StaticFiles;
+FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
+
+// The MIME type for .GLB and .GLTF files are registered with IANA under the 'model' heading
+// https://www.iana.org/assignments/media-types/media-types.xhtml#model
+provider.Mappings[".glb"] = "model/gltf+binary";
+provider.Mappings[".gltf"] = "model/gltf+json";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+       Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/wwwroot",
+    ContentTypeProvider = provider
+});
 
 app.UseRouting();
 

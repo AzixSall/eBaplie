@@ -1,0 +1,40 @@
+﻿@model eBaplie.Models.Vessel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Vessel @Html.DisplayFor(model => model.Name)</h1>
+
+<p>
+    <a class="btn btn-outline-primary" asp-action="Create" asp-controller="Voyages" asp-route-vesselId="@Model.Id">Add a new voyage</a>
+</p>
+<hr />
+@if(Model.VoyagesNavigation == null || !Model.VoyagesNavigation.Any())
+{
+    <p>No voyages registered for this vessel.</p>
+}
+else
+{
+    <table class="table table-stripped">
+        <thead>
+            <tr>
+                <th>Voyage Number</th>
+                <th>ETA</th>
+                <th>Last Stowage Update</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var voyage in Model.VoyagesNavigation)
+            {
+                <tr>
+                    <td>@voyage.VoygeNumber</td>
+                    <td>@DateTime.Now.Date</td>
+                    <td>@DateTime.Now.Date</td>
+                    <th><a asp-action="VesselStowage" asp-controller="Vessels" asp-route-voyageId="@voyage.Id" class="btn btn-info">View Stowage plan</a></th>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

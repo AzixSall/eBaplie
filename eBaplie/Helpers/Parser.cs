@@ -592,7 +592,6 @@ namespace eBaplie.Helpers
 
                                     if (elem[j + 1] == "11")
                                     {
-
                                         if (elem.Length > 4)
                                         {
                                             string[] tab2 = elem[elem.Length - 1].Split(char.Parse(":"));
@@ -606,7 +605,6 @@ namespace eBaplie.Helpers
                                             {
                                                 edifact.PortOfDischarge = tab2[0];
                                             }
-
                                         }
                                         else if (elem.Length == 4)
                                         {

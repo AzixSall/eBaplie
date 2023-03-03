@@ -1,0 +1,11 @@
+Model Information:
+* title:	Container
+* source:	https://sketchfab.com/3d-models/container-92bd84031ebc4ddcbf3b3d3689c4bf31
+* author:	H.A.K_Niazi (https://sketchfab.com/hasnatahmedkhan216)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Container" (https://sketchfab.com/3d-models/container-92bd84031ebc4ddcbf3b3d3689c4bf31) by H.A.K_Niazi (https://sketchfab.com/hasnatahmedkhan216) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

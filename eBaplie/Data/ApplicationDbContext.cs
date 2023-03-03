@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using eBaplie.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace eBaplie.Data
@@ -9,5 +10,11 @@ namespace eBaplie.Data
             : base(options)
         {
         }
+
+        public DbSet<Vessel>? Vessels { get; set; }
+        public DbSet<EdifactGlobal>? EdifactGlobals { get; set; }
+        public DbSet<EdiChangeLog>? EdiChangeLogs { get; set; }
+        public DbSet<BaplieRequirement>? BaplieRequirements { get; set; }
+        public DbSet<eBaplie.Models.Voyage> Voyage { get; set; }
     }
 }
