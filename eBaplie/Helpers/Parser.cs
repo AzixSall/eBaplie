@@ -176,15 +176,16 @@ namespace eBaplie.Helpers
 
                                 if (elem[j] == "FTX")
                                 {
+                                    edifact.FreeText += "/ " + elem[elem.Length - 1];
 
-                                    if (elem[j + 1] == "AAI" || elem[j + 1] == "AAA")
-                                    {
-                                        edifact.FreeText = elem[elem.Length - 1];
-                                    }
-                                    else
-                                    {
-                                        edifact.FreeText = elem[elem.Length - 1];
-                                    }
+                                    //if (elem[j + 1] == "AAI" || elem[j + 1] == "AAA")
+                                    //{
+                                    //    edifact.FreeText = elem[elem.Length - 1];
+                                    //}
+                                    //else
+                                    //{
+                                    //    edifact.FreeText = elem[elem.Length - 1];
+                                    //}
                                 }
 
                                 if (elem[j] == "SGP")
@@ -261,79 +262,92 @@ namespace eBaplie.Helpers
                                 {
                                     string[] eqd = helpers.GetComponent(elem[j + 3]);
 
-                                    switch (elem[5])
+                                    //switch (elem[5])
+                                    //{
+                                    //    case "1":
+                                    //        if (elem[6] == "5")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Continental";
+                                    //            edifact.StatusEnum = Status.Full;
+                                    //        }
+                                    //        if (elem[6] == "4")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Continental";
+                                    //            edifact.StatusEnum = Status.Empty;
+                                    //        }
+
+                                    //        break;
+
+                                    //    case "2":
+
+                                    //        if (elem[6] == "5")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Export";
+                                    //            edifact.StatusEnum = Status.Full;
+                                    //        }
+                                    //        if (elem[6] == "4")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Export";
+                                    //            edifact.StatusEnum = Status.Empty;
+                                    //        }
+                                    //        break;
+
+                                    //    case "3":
+
+                                    //        if (elem[6] == "5")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Import";
+                                    //            edifact.StatusEnum = Status.Full;
+                                    //        }
+                                    //        if (elem[6] == "4")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Import";
+                                    //            edifact.StatusEnum = Status.Empty;
+                                    //        }
+                                    //        break;
+
+                                    //    case "6":
+
+                                    //        if (elem[6] == "5")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Transhipment";
+                                    //            edifact.StatusEnum = Status.Full;
+                                    //        }
+                                    //        if (elem[6] == "4")
+                                    //        {
+                                    //            edifact.ContainerID = elem[2];
+                                    //            edifact.TypeISO = eqd[0];
+                                    //            edifact.Status = "Transhipment";
+                                    //            edifact.StatusEnum = Status.Empty;
+                                    //        }
+                                    //        break;
+                                    //}
+
+                                    if (elem[6] == "5")
                                     {
-                                        case "1":
-                                            if (elem[6] == "5")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Continental";
-                                                edifact.StatusEnum = Status.Full;
-                                            }
-                                            if (elem[6] == "4")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Continental";
-                                                edifact.StatusEnum = Status.Empty;
-                                            }
-
-                                            break;
-
-                                        case "2":
-
-                                            if (elem[6] == "5")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Export";
-                                                edifact.StatusEnum = Status.Full;
-                                            }
-                                            if (elem[6] == "4")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Export";
-                                                edifact.StatusEnum = Status.Empty;
-                                            }
-                                            break;
-
-                                        case "3":
-
-                                            if (elem[6] == "5")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Import";
-                                                edifact.StatusEnum = Status.Full;
-                                            }
-                                            if (elem[6] == "4")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Import";
-                                                edifact.StatusEnum = Status.Empty;
-                                            }
-                                            break;
-
-                                        case "6":
-
-                                            if (elem[6] == "5")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Transhipment";
-                                                edifact.StatusEnum = Status.Full;
-                                            }
-                                            if (elem[6] == "4")
-                                            {
-                                                edifact.ContainerID = elem[2];
-                                                edifact.TypeISO = eqd[0];
-                                                edifact.Status = "Transhipment";
-                                                edifact.StatusEnum = Status.Empty;
-                                            }
-                                            break;
+                                        edifact.ContainerID = elem[2];
+                                        edifact.TypeISO = eqd[0];
+                                        edifact.StatusEnum = Status.Full;
+                                    }
+                                    if (elem[6] == "4")
+                                    {
+                                        edifact.ContainerID = elem[2];
+                                        edifact.TypeISO = eqd[0];
+                                        edifact.StatusEnum = Status.Empty;
                                     }
 
                                     if (!string.IsNullOrEmpty(eqd[0]))
@@ -381,7 +395,7 @@ namespace eBaplie.Helpers
                                      MEA+AAE+AAW+MTQ:50'*/
                                     if (elem.Length >= 4)
                                     {
-                                        if (elem[j + 2] == "VGM")
+                                        if (elem[j + 1] == "VGM")
                                         {
                                             string[] tab = elem[elem.Length - 1].Split(char.Parse(":"));
                                             edifact.VGM = Int32.Parse(tab[1]);
