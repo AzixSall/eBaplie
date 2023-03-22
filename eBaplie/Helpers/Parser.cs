@@ -398,7 +398,21 @@ namespace eBaplie.Helpers
                                         if (elem[j + 1] == "VGM")
                                         {
                                             string[] tab = elem[elem.Length - 1].Split(char.Parse(":"));
-                                            edifact.VGM = Int32.Parse(tab[1]);
+                                            try
+                                            {
+                                                edifact.VGM = Int32.Parse(tab[1]);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                try
+                                                {
+                                                    edifact.VGM = Int32.Parse(tab[1].Split(char.Parse("."))[0]);
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    continue;
+                                                }
+                                            }
                                         }
                                         else if (elem[j + 2] == "T")
                                         {
@@ -496,6 +510,7 @@ namespace eBaplie.Helpers
                                             if (Int32.Parse(bayloc.Substring(5, 2)) >= 80)
                                             {
                                                 edifact.YPos = (Int32.Parse(bayloc.Substring(5, 2)) - 80).ToString();
+                                                edifact.IsUnderDeck = true;
                                             }
                                             else
                                             {

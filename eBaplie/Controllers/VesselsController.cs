@@ -147,7 +147,7 @@ namespace eBaplie.Controllers
 
             List<PortColor> portColors = new List<PortColor>();
 
-            foreach (var port in baplieData.Ports)
+            foreach (var port in baplieData.Ports.ToList())
             {
                 var random = new Random();
                 var color = String.Format("#{0:X6}", random.Next(0x1000000));

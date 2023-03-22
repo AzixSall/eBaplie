@@ -206,6 +206,8 @@ namespace eBaplie.Models
 
         public bool? Active { get; set; }
 
+        public bool? IsUnderDeck { get; set; }
+
         //Virtual
         [Display(Name = "Voyage")]
         public virtual Voyage? VoyageNavigation { get; set; }

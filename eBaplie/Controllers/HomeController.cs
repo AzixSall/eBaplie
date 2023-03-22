@@ -19,6 +19,11 @@ namespace eBaplie.Controllers
             return RedirectToAction("Index", "Vessels");
         }
 
+        public IActionResult UploadBaplie()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
