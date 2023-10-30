@@ -3,13 +3,64 @@
     ViewData["Title"] = "Upload Baplie";
 }
 
-<h1>eBaplie</h1>
-<div class="text-center">
-    <p>Looking for an innovative tool that can help you easily parse BAPLIE files and visualize container data in a 3D model? Look no further than eBaplie, the cutting-edge solution for container management!<br />
-
-With eBaplie, you can quickly and easily upload BAPLIE files and visualize container data in a 3D model. Each container can be clicked on to view detailed information about its contents, making it easy to keep track of inventory and ensure efficient container management.<br />
-
-But that's not all – eBaplie also allows you to export container data to Excel, providing you with a detailed list of all containers and their associated information. eBaplie is the ideal solution for simplifying the management process and ensuring maximum efficiency.<br />
-
-So why wait? Sign up for eBaplie today and take your container management to the next level!</p>
+@*<h1>eBaplie</h1>
+<hr />
+<h5>Upload your BAPLIE file</h5><br />*@
+<div class="container my-5">
+    <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+      <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+        <h1 class="display-4 fw-bold lh-1">Revolutionize Your Container Management with eBaplie: Visualize, Manage, and Export Your Data Like Never Before!</h1>
+        <p class="lead">Upgrade your container management with eBaplie! Easily parse and visualize BAPLIE files in a 3D model, with detailed container information just a click away. Plus, export data to Excel for easy inventory management. Get started with eBaplie today and streamline your container management process!
+            <br /><b>eBaplie does not save any data during the process</b>
+        </p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+           <form method="post" asp-action="ConvertBaplie" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="file" name="baplieFile" required class="form-control"/>
+                </div>
+                <br />
+                <div class="from-group">
+                    <input type="submit" value="Convert BAPLIE" class="btn btn-success btn-lg px-4 me-md-2 fw-bold"/>
+                </div>
+            </form>
+        </div>
+        <p class="text-danger">This version only supports D95B BAPLIE Versions. For any queries, reach out at abdazizsall@outlook.com</p>
+      </div>
+      <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+          <img class="rounded-lg-3" src="~/Picture_Hero.png" alt="" width="720">
+      </div>
+    </div>
 </div>
+
+  <div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">Features</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <i class="fa-solid fa-eye"></i>
+        </div>
+        <div>
+          <h2>Visualize container data in 3D</h2>
+          <p>With eBaplie, you can easily parse and visualize BAPLIE files in a 3D model, allowing you to quickly and accurately analyze container information.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <div>
+          <h2>Detailed container information</h2>
+          <p>Click on any container in the 3D model to view detailed information about its contents, helping you keep track of inventory and manage your containers more efficiently.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+          <i class="fa-solid fa-table"></i>
+        </div>
+        <div>
+          <h2>Export data to Excel</h2>
+          <p>eBaplie lets you export container data to Excel, providing you with a comprehensive list of all containers and their associated information, making inventory management a breeze!</p>
+        </div>
+      </div>
+    </div>
+  </div>

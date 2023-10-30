@@ -9,6 +9,7 @@ using eBaplie.Data;
 using eBaplie.Models;
 using eBaplie.Helpers;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eBaplie.Controllers
 {
@@ -22,34 +23,34 @@ namespace eBaplie.Controllers
         }
 
         // GET: Vessels
-        public async Task<IActionResult> Index()
-        {
-              return View(await _context.Vessels.ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //      return View(await _context.Vessels.ToListAsync());
+        //}
 
         // GET: Vessels/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Vessels == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null || _context.Vessels == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var vessel = await _context.Vessels.Include(v => v.VoyagesNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vessel == null)
-            {
-                return NotFound();
-            }
+        //    var vessel = await _context.Vessels.Include(v => v.VoyagesNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (vessel == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(vessel);
-        }
+        //    return View(vessel);
+        //}
 
-        // GET: Vessels/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        //// GET: Vessels/Create
+        //public IActionResult Create()
+        //{
+        //    return View();
+        //}
 
 
         [HttpPost]
@@ -76,20 +77,20 @@ namespace eBaplie.Controllers
         }
 
         // GET: Vessels/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Vessels == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null || _context.Vessels == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var vessel = await _context.Vessels.FindAsync(id);
-            if (vessel == null)
-            {
-                return NotFound();
-            }
-            return View(vessel);
-        }
+        //    var vessel = await _context.Vessels.FindAsync(id);
+        //    if (vessel == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(vessel);
+        //}
 
 
         [HttpPost]
@@ -133,56 +134,56 @@ namespace eBaplie.Controllers
             return View(vessel);
         }
 
-        public async Task<IActionResult> VesselStowage(int voyageId)
-        {
-            Voyage? voyage = await _context.Voyage.FindAsync(voyageId);
+        //public async Task<IActionResult> VesselStowage(int voyageId)
+        //{
+        //    Voyage? voyage = await _context.Voyage.FindAsync(voyageId);
 
-            if(voyage == null)
-            {
-                return NotFound();
-            }
-            string text = Encoding.UTF8.GetString(voyage.BaplieFile);
+        //    if(voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    string text = Encoding.UTF8.GetString(voyage.BaplieFile);
 
-            var baplieData = Parser.ProcessFileSegments(text);
+        //    var baplieData = Parser.ProcessFileSegments(text);
 
-            List<PortColor> portColors = new List<PortColor>();
+        //    List<PortColor> portColors = new List<PortColor>();
 
-            foreach (var port in baplieData.Ports.ToList())
-            {
-                var random = new Random();
-                var color = String.Format("#{0:X6}", random.Next(0x1000000));
+        //    foreach (var port in baplieData.Ports.ToList())
+        //    {
+        //        var random = new Random();
+        //        var color = String.Format("#{0:X6}", random.Next(0x1000000));
 
-                PortColor portColor = new PortColor
-                {
-                    Color = color,
-                    Name = port.Name
-                };
+        //        PortColor portColor = new PortColor
+        //        {
+        //            Color = color,
+        //            Name = port.Name
+        //        };
 
-                portColors.Add(portColor);
-            }
+        //        portColors.Add(portColor);
+        //    }
 
-            ViewBag.PortColor = portColors;
-            ViewBag.Containers = baplieData.Containers.ToArray();
-            return View(baplieData);
-        }
+        //    ViewBag.PortColor = portColors;
+        //    ViewBag.Containers = baplieData.Containers.ToArray();
+        //    return View(baplieData);
+        //}
 
         // GET: Vessels/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Vessels == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.Vessels == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var vessel = await _context.Vessels
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vessel == null)
-            {
-                return NotFound();
-            }
+        //    var vessel = await _context.Vessels
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (vessel == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(vessel);
-        }
+        //    return View(vessel);
+        //}
 
         // POST: Vessels/Delete/5
         [HttpPost, ActionName("Delete")]

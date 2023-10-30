@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using eBaplie.Data;
 using eBaplie.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eBaplie.Controllers
 {
@@ -20,80 +21,80 @@ namespace eBaplie.Controllers
         }
 
         // GET: Voyages
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Voyage.Include(v => v.VesselNavigation);
-            return View(await applicationDbContext.ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    var applicationDbContext = _context.Voyage.Include(v => v.VesselNavigation);
+        //    return View(await applicationDbContext.ToListAsync());
+        //}
 
         // GET: Voyages/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Voyage == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null || _context.Voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var voyage = await _context.Voyage
-                .Include(v => v.VesselNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (voyage == null)
-            {
-                return NotFound();
-            }
+        //    var voyage = await _context.Voyage
+        //        .Include(v => v.VesselNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(voyage);
-        }
+        //    return View(voyage);
+        //}
 
         // GET: Voyages/Create
-        public IActionResult Create(int vesselId)
-        {
-            ViewBag.VesselId = vesselId;
-            return View();
-        }
+        //public IActionResult Create(int vesselId)
+        //{
+        //    ViewBag.VesselId = vesselId;
+        //    return View();
+        //}
 
         // POST: Voyages/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VoygeNumber,VesselId")] Voyage voyage, IFormFile BaplieFile)
-        {
-            if (ModelState.IsValid)
-            {
-                if (BaplieFile.Length > 0)
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        BaplieFile.CopyTo(ms);
-                        var fileBytes = ms.ToArray();
-                        voyage.BaplieFile = fileBytes;
-                    }
-                }
-                _context.Add(voyage);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Details), "Vessels", new {id = voyage.VesselId});
-            }
-            ViewData["VesselId"] = new SelectList(_context.Vessels, "Id", "Id", voyage.VesselId);
-            return View(voyage);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,VoygeNumber,VesselId")] Voyage voyage, IFormFile BaplieFile)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (BaplieFile.Length > 0)
+        //        {
+        //            using (var ms = new MemoryStream())
+        //            {
+        //                BaplieFile.CopyTo(ms);
+        //                var fileBytes = ms.ToArray();
+        //                voyage.BaplieFile = fileBytes;
+        //            }
+        //        }
+        //        _context.Add(voyage);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Details), "Vessels", new {id = voyage.VesselId});
+        //    }
+        //    ViewData["VesselId"] = new SelectList(_context.Vessels, "Id", "Id", voyage.VesselId);
+        //    return View(voyage);
+        //}
 
-        // GET: Voyages/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Voyage == null)
-            {
-                return NotFound();
-            }
+        //// GET: Voyages/Edit/5
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null || _context.Voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var voyage = await _context.Voyage.FindAsync(id);
-            if (voyage == null)
-            {
-                return NotFound();
-            }
-            ViewData["VesselId"] = new SelectList(_context.Vessels, "Id", "Id", voyage.VesselId);
-            return View(voyage);
-        }
+        //    var voyage = await _context.Voyage.FindAsync(id);
+        //    if (voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewData["VesselId"] = new SelectList(_context.Vessels, "Id", "Id", voyage.VesselId);
+        //    return View(voyage);
+        //}
 
         // POST: Voyages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -132,23 +133,23 @@ namespace eBaplie.Controllers
         }
 
         // GET: Voyages/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Voyage == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null || _context.Voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var voyage = await _context.Voyage
-                .Include(v => v.VesselNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (voyage == null)
-            {
-                return NotFound();
-            }
+        //    var voyage = await _context.Voyage
+        //        .Include(v => v.VesselNavigation)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (voyage == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(voyage);
-        }
+        //    return View(voyage);
+        //}
 
         // POST: Voyages/Delete/5
         [HttpPost, ActionName("Delete")]

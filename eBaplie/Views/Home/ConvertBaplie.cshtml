@@ -1,0 +1,420 @@
+﻿@model eBaplie.Models.BaplieData
+
+@{
+    ViewData["Title"] = "Vessel Stowage";
+}
+<p>
+    <h2><b>Voyage Number:</b> @Model.Containers.FirstOrDefault().VoyageNumber</h2><br />
+    <h4><b>Number of containers: </b> @Model.Containers.Count</h4>
+</p>
+
+<div class="row">
+    <h4><b>List of Discharge Ports:</b></h4>
+    @foreach (var port in ViewBag.PortColor)
+    {
+        <div style="background-color: @port.Color ; padding: 10px; border: 1px solid green; width: 75px;" class="my-2 mx-2">@port.Name</div>
+    }
+</div>
+
+<div class="my-4">
+    <input type="checkbox" id="highlightDgsCheckbox" /> Highlight <span class="text text-danger">Dangerous Containers</span> |
+    <input type="checkbox" id="highlightReeferCheckbox" /> Highlight <span class="text text-info">Refeer Containers</span>
+</div>
+
+@*<div class="card mb-4">
+    <div class="card-header">
+        Vessel
+    </div>
+    <div class="card-body">
+        <div id="scene-container" class="my-4"></div>
+    </div>
+</div>*@
+<div class="row">
+	<div class="col-md-9">
+       <div class="card mb-4">
+            <div class="card-header">
+                Vessel
+            </div>
+            <div class="card-body">
+                <div id="scene-container" class="my-4"></div>
+            </div>
+        </div>
+		
+	</div>
+	<div class="col-md-3">
+		<div class="card mb-4">
+            <div class="card-header">
+                Container Details
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Select a container</p>
+                    <b>Container Id:</b> <span id="containerId"></span><br />
+                    <b>Description:</b> <span id="description"></span><br />
+                    <b>IMDG class:</b> <span id="ImdgClass"></span><br />
+                    <b>Measurement:</b> <span id="measurement"></span><br />
+                    <b>Discharge port:</b> <span id="dischargePort"></span><br />
+                    <b>Loading port:</b> <span id="loadingPort"></span><br />
+                    <b>Trans-shipment port:</b> <span id="transshipmentPort"></span><br />
+                    <b>Temperature:</b> <span id="temperature"></span><br />
+                    <b>ISO type:</b> <span id="isoType"></span><br />
+                    <b>VGM:</b> <span id="vgm"></span><br />
+                    <b>Row:</b> <span id="row"></span><br />
+                    <b>Bay:</b> <span id="bay"></span><br />
+                    <b>Tier:</b> <span id="tier"></span>
+            </div>
+        </div>
+	</div>
+</div>
+
+<div class="card mb-4">
+	<div class="card-header">
+		List of Containers
+	</div>
+	<div class="card-body">
+		<table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>
+                        Destination
+                    </th>
+                    <th>
+                        Container ID
+                    </th>
+                    <th>
+                        Position(Row, Bay, Tier)
+                    </th>
+                    <th>
+                        ISO Code
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        IMDG Class
+                    </th>
+                    <th>
+                        VGM (Kgm)
+                    </th>
+                    <th>
+                        Temperature (Cel)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Containers) {
+                    <tr>
+                        <td>
+                            @foreach (var port in ViewBag.PortColor)
+                            {
+                                if(item.PortOfDischarge == port.Name)
+                                {
+                                    <span style="background-color: @port.Color ; padding: 10px; border: 1px solid green; width: 75px;" class="my-2 mx-2">@port.Name</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContainerID)
+                        </td>
+                        <td>
+                            @{string p = item.YPos;}
+                            @if(item.IsUnderDeck.HasValue && item.IsUnderDeck == true)
+                            {
+                                if (!string.IsNullOrEmpty(item.YPos))
+                                {
+                                    int positionY = Int32.Parse(item.YPos) + 80;
+                                    p = positionY.ToString();
+                                }
+                            }
+                            <span>@item.XPos@item.ZPos@p </span>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TypeISO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DryOrReefer)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IMDGClass)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VGM)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Temperature)
+                        </td>
+                        <td>
+                            <button class = "btn btn-success view-container" data-container-number ="@item.ContainerID"><i class="fa-solid fa-eye"></i> View</button>
+                            @*<button class = "btn btn-danger" asp-action="Edit" asp-controller="Home"><i class="fa-solid fa-right-left"></i> Swap</button>*@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+	</div>
+</div>
+
+
+
+
+@section Scripts{
+    <script type="module" defer>
+		
+        const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+		const renderer = new THREE.WebGLRenderer();
+		//renderer.setSize( window.innerWidth, window.innerHeight );
+		
+		var container = document.getElementById("scene-container");
+		container.appendChild( renderer.domElement );
+        //renderer.setSize( 600, 500, false );
+        renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+
+		var data = @Html.Raw(Json.Serialize(@ViewBag.Containers));
+		var dataPortColor = @Html.Raw(Json.Serialize(@ViewBag.PortColor));
+        var color = null;
+		data.forEach((element) => {
+            var material = null;
+			const geometry = new THREE.BoxGeometry( 2, 1, 1 );
+            dataPortColor.forEach((port) => {
+                if (port.name === element.portOfDischarge || port.name == element.portOfLoading) {
+                    color = port.color;
+                    material = new THREE.MeshBasicMaterial({ color: port.color });
+                }
+            });
+
+            if ($('#highlightDgsCheckbox').is(':checked')) {
+                if (element.imdgClass != null) {
+                    material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                }
+            }
+
+             if ($('#highlightReeferCheckbox').is(':checked')) {
+                if (element.temperature != null) {
+                    material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+                }
+            }
+
+			//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			const cube = new THREE.Mesh( geometry, material );
+
+            // create a box helper for the cube
+            var boxHelper = new THREE.BoxHelper(cube);
+            boxHelper.material.color.set(0x000000);
+
+            cube.position.x = element.xPos;
+            cube.position.y = element.yPos;
+            cube.position.z = element.zPos;
+
+            cube.userData.details = {
+                containerid: element.containerID,
+                description: element.freeText,
+                imdgclass: element.imdgClass,
+                measurement: element.measurement,
+                dischargeport: element.portOfDischarge,
+                loadingport: element.portOfLoading,
+                transshipmentport: element.portOfTransShipment,
+                temperature: element.temperature,
+                isotype: element.typeISO,
+                vgm: element.vgm,
+                row: element.xPos,
+                bay: element.yPos,
+                tier: element.zPos,
+                defaultcolor: color
+            };
+
+			scene.add( cube );
+
+			scene.add( boxHelper );
+
+            // update the box helper
+            boxHelper.update();
+		});
+
+        var grid = new THREE.GridHelper(1000, 200);
+        scene.add(grid);
+
+        //LIGHTS
+        var lights = [];
+        lights[0] = new THREE.PointLight(0xfffff, 10, 0);
+        lights[1] = new THREE.PointLight(0xffffff, 10, 0);
+        lights[2] = new THREE.PointLight(0xffffff, 10, 0);
+        lights[0].position.set(0, 500, 0);
+        lights[1].position.set(100, 500, 100);
+        lights[2].position.set(-100, -500, -100);
+        scene.add(lights[0]);
+        scene.add(lights[1]);
+        scene.add(lights[2]);
+
+		camera.position.z = 25;
+		const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.autoRotate = true;
+		function animate() {
+			requestAnimationFrame( animate );
+			//cube.rotation.x += 0.01;
+			//cube.rotation.y += 0.01;
+            controls.update();
+			renderer.render( scene, camera );
+			
+		};
+
+		animate();
+
+        const raycaster = new THREE.Raycaster();
+        const rect = renderer.domElement.getBoundingClientRect();
+        const mouse = new THREE.Vector2();
+
+        let highlightedObject = null;
+
+       function onMouseMove(event) {
+          mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+       }
+
+
+        function highlightObject(object) {
+          // Un-highlight any previously highlighted object
+          if (highlightedObject !== null) {
+            unhighlightObject(highlightedObject);
+          }
+
+          // Save reference to the newly highlighted object
+          highlightedObject = object;
+
+          // Swap material to highlighted material
+          object.material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
+        }
+
+        function unhighlightObject(object) {
+
+            // Swap material back to original material
+            object.material = new THREE.MeshBasicMaterial({ color: object.userData.details.defaultcolor });
+
+            if (object.userData.details.imdgclass != null) {
+                    object.material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                }
+
+            if (object.userData.details.temperature != null) {
+                    object.material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+                }        
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth * 0.5 / window.innerHeight * 0.5;
+            renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+            controls.handleResize();
+        }
+
+
+        function onClick(event) {
+            // update the picking ray with the camera and mouse position
+            raycaster.setFromCamera(mouse, camera);
+
+            if (event.clientX >= rect.left && event.clientX <= rect.right &&
+                event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children);
+                // handle intersected objects
+                // loop through the intersections and get the details of the first cube
+                // that was clicked on
+                for (let i = 0; i < intersects.length; i++) {
+                    const object = intersects[i].object;
+                    if (object instanceof THREE.Mesh && object.userData.details) {
+                        const details = object.userData.details;
+
+                        let clickedObject = object;
+                        highlightObject(clickedObject);
+
+                        $('#containerId').text(highlightedObject.userData.details.containerid)
+                        $('#description').text(highlightedObject.userData.details.description)
+                        $('#ImdgClass').text(highlightedObject.userData.details.imdgclass)
+                        $('#measurement').text(highlightedObject.userData.details.measurement)
+                        $('#dischargePort').text(highlightedObject.userData.details.dischargeport)
+                        $('#loadingPort').text(highlightedObject.userData.details.loadingport)
+                        $('#transshipmentPort').text(highlightedObject.userData.details.transshipmentport)
+                        $('#temperature').text(highlightedObject.userData.details.temperature)
+                        $('#isoType').text(highlightedObject.userData.details.isotype)
+                        $('#vgm').text(highlightedObject.userData.details.vgm)
+                        $('#row').text(highlightedObject.userData.details.row)
+                        $('#bay').text(highlightedObject.userData.details.bay)
+                        $('#tier').text(highlightedObject.userData.details.tier)
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        $('#highlightDgsCheckbox').on('change', function() {
+            console.log("change detected");
+            var containersScene = scene.children;
+            if($('#highlightDgsCheckbox').is(':checked')){
+                console.log("is checked");
+                for (let i = 0; i < containersScene.length; i++){
+                    if (containersScene[i] instanceof THREE.Mesh && containersScene[i].userData.details && containersScene[i].userData.details.imdgclass != null) {
+                         containersScene[i].material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                    }
+                }
+            }else{
+                for (let i = 0; i < containersScene.length; i++){
+                    if (containersScene[i] instanceof THREE.Mesh && containersScene[i].userData.details && containersScene[i].userData.details.imdgclass != null) {
+                         containersScene[i].material = new THREE.MeshBasicMaterial({ color: containersScene[i].userData.details.defaultcolor });
+                    }
+                }
+            }
+        });
+
+        $('#highlightReeferCheckbox').on('change', function() {
+            console.log("change detected");
+            var containersScene = scene.children;
+            if($('#highlightReeferCheckbox').is(':checked')){
+                console.log("is checked");
+                for (let i = 0; i < containersScene.length; i++){
+                    if (containersScene[i] instanceof THREE.Mesh && containersScene[i].userData.details && containersScene[i].userData.details.temperature != null) {
+                         containersScene[i].material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+                    }
+                }
+            }else{
+                for (let i = 0; i < containersScene.length; i++){
+                    if (containersScene[i] instanceof THREE.Mesh && containersScene[i].userData.details && containersScene[i].userData.details.temperature != null) {
+                         containersScene[i].material = new THREE.MeshBasicMaterial({ color: containersScene[i].userData.details.defaultcolor });
+                    }
+                }
+            }
+        });
+
+        $('.view-container').on('click', function(e) {
+            var containerNumberToLook = $(this).data('container-number');
+            var containersInScene = scene.children;
+            for (let i = 0; i < containersInScene.length; ++i) {
+                if (containersInScene[i] instanceof THREE.Mesh && containersInScene[i].userData.details && containersInScene[i].userData.details.containerid == containerNumberToLook) {
+                    highlightObject(containersInScene[i]);
+
+                    $('#containerId').text(containersInScene[i].userData.details.containerid)
+                    $('#description').text(containersInScene[i].userData.details.description)
+                    $('#ImdgClass').text(containersInScene[i].userData.details.imdgclass)
+                    $('#measurement').text(containersInScene[i].userData.details.measurement)
+                    $('#dischargePort').text(containersInScene[i].userData.details.dischargeport)
+                    $('#loadingPort').text(containersInScene[i].userData.details.loadingport)
+                    $('#transshipmentPort').text(containersInScene[i].userData.details.transshipmentport)
+                    $('#temperature').text(containersInScene[i].userData.details.temperature)
+                    $('#isoType').text(containersInScene[i].userData.details.isotype)
+                    $('#vgm').text(containersInScene[i].userData.details.vgm)
+                    $('#row').text(containersInScene[i].userData.details.row)
+                    $('#bay').text(containersInScene[i].userData.details.bay)
+                    $('#tier').text(containersInScene[i].userData.details.tier)
+
+                    $(window).scrollTop(0);
+
+                    break;
+                }
+            }
+        });
+
+        window.addEventListener('mousemove', onMouseMove, false);
+        window.addEventListener('click', onClick, false);
+
+	</script>
+}
+
