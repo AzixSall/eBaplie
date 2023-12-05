@@ -161,9 +161,17 @@
     <script type="module" defer>
 		
         const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        const raycaster = new THREE.Raycaster();
+        let INTERSECTED;
+        const mouse = new THREE.Vector2();
+
+        scene.background = new THREE.Color(0x444488);
+		//const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 2500);
+        camera.position.set(0.0, 400, 400 * 3.5);
 
 		const renderer = new THREE.WebGLRenderer();
+
 		//renderer.setSize( window.innerWidth, window.innerHeight );
 		
 		var container = document.getElementById("scene-container");
@@ -175,65 +183,86 @@
 		var dataPortColor = @Html.Raw(Json.Serialize(@ViewBag.PortColor));
         var color = null;
 		data.forEach((element) => {
-            var material = null;
-			const geometry = new THREE.BoxGeometry( 2, 1, 1 );
-            dataPortColor.forEach((port) => {
-                if (port.name === element.portOfDischarge || port.name == element.portOfLoading) {
-                    color = port.color;
-                    material = new THREE.MeshBasicMaterial({ color: port.color });
-                }
-            });
+            try{
+                //For some obscure reasons it needs to have a double semi column
+                var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });;
+                const geometry = new THREE.BoxGeometry(2, 1, 1);
 
-            if ($('#highlightDgsCheckbox').is(':checked')) {
-                if (element.imdgClass != null) {
-                    material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                const texture = new THREE.TextureLoader().load("/textures/Container20_T_White.png");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(4, 4);
+
+                //const material = new THREE.MeshBasicMaterial({ map: texture });
+
+                if(dataPortColor != null)
+                {
+                    dataPortColor.forEach((port) => {
+                        if (port.name === element.portOfDischarge || port.name == element.portOfLoading) {
+                            color = port.color;
+                            material = new THREE.MeshBasicMaterial({ color: port.color });
+                        }
+                    });
                 }
+
+                if ($('#highlightDgsCheckbox').is(':checked')) {
+                    if (element.imdgClass != null) {
+                        material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                    }
+                }
+
+                if ($('#highlightReeferCheckbox').is(':checked')) {
+                    if (element.temperature != null) {
+                        material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+                    }
+                }
+
+               // material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+                const cube = new THREE.Mesh(geometry, material); 
+
+                // create a box helper for the cube
+                var boxHelper = new THREE.BoxHelper(cube);
+                boxHelper.material.color.set(0x000000);
+
+                cube.position.x = element.xPos;
+                cube.position.y = element.yPos;
+                cube.position.z = element.zPos;
+
+                cube.userData.details = {
+                    containerid: element.containerID,
+                    description: element.freeText,
+                    imdgclass: element.imdgClass,
+                    measurement: element.measurement,
+                    dischargeport: element.portOfDischarge,
+                    loadingport: element.portOfLoading,
+                    transshipmentport: element.portOfTransShipment,
+                    temperature: element.temperature,
+                    isotype: element.typeISO,
+                    vgm: element.vgm,
+                    row: element.xPos,
+                    bay: element.yPos,
+                    tier: element.zPos,
+                    defaultcolor: color
+                };
+
+                scene.add(cube);
+
+                scene.add(boxHelper);
+
+                // update the box helper
+                boxHelper.update();
             }
-
-             if ($('#highlightReeferCheckbox').is(':checked')) {
-                if (element.temperature != null) {
-                    material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
-                }
+            catch{
+                console.log("Error during initialisation");
             }
-
-			//const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			const cube = new THREE.Mesh( geometry, material );
-
-            // create a box helper for the cube
-            var boxHelper = new THREE.BoxHelper(cube);
-            boxHelper.material.color.set(0x000000);
-
-            cube.position.x = element.xPos;
-            cube.position.y = element.yPos;
-            cube.position.z = element.zPos;
-
-            cube.userData.details = {
-                containerid: element.containerID,
-                description: element.freeText,
-                imdgclass: element.imdgClass,
-                measurement: element.measurement,
-                dischargeport: element.portOfDischarge,
-                loadingport: element.portOfLoading,
-                transshipmentport: element.portOfTransShipment,
-                temperature: element.temperature,
-                isotype: element.typeISO,
-                vgm: element.vgm,
-                row: element.xPos,
-                bay: element.yPos,
-                tier: element.zPos,
-                defaultcolor: color
-            };
-
-			scene.add( cube );
-
-			scene.add( boxHelper );
-
-            // update the box helper
-            boxHelper.update();
+            
 		});
 
-        var grid = new THREE.GridHelper(1000, 200);
-        scene.add(grid);
+        //var grid = new THREE.GridHelper(1000, 200);
+        const gridHelper = new THREE.GridHelper(100, 200, 0x000000, 0x000000);
+        gridHelper.material.opacity = 0.2;
+        gridHelper.material.transparent = false;
+        //scene.add(gridHelper);
 
         //LIGHTS
         var lights = [];
@@ -247,13 +276,22 @@
         scene.add(lights[1]);
         scene.add(lights[2]);
 
-		camera.position.z = 25;
+		//camera.position.z = 25;
 		const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.autoRotate = true;
+
+        controls.minDistance = 25;
+        controls.maxDistance = 100;
+
+        window.addEventListener('resize', onWindowResize);
+
+        //Handles Camera Rotation
+        //controls.autoRotate = true;
+
 		function animate() {
 			requestAnimationFrame( animate );
 			//cube.rotation.x += 0.01;
 			//cube.rotation.y += 0.01;
+            //render();
             controls.update();
 			renderer.render( scene, camera );
 			
@@ -261,9 +299,7 @@
 
 		animate();
 
-        const raycaster = new THREE.Raycaster();
         const rect = renderer.domElement.getBoundingClientRect();
-        const mouse = new THREE.Vector2();
 
         let highlightedObject = null;
 
@@ -300,10 +336,19 @@
                 }        
         }
 
+        //function onWindowResize() {
+        //    camera.aspect = window.innerWidth * 0.5 / window.innerHeight * 0.5;
+        //    renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+        //    controls.handleResize();
+        //}
+
         function onWindowResize() {
-            camera.aspect = window.innerWidth * 0.5 / window.innerHeight * 0.5;
-            renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
-            controls.handleResize();
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
         }
 
 
@@ -411,6 +456,40 @@
                 }
             }
         });
+
+        function render() {
+
+            // find intersections
+
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObjects(scene.children, false);
+
+            if (intersects.length > 0) {
+
+                const targetDistance = intersects[0].distance;
+
+                //camera.focusAt(targetDistance); // using Cinematic camera focusAt method
+
+                if (INTERSECTED != intersects[0].object) {
+
+                    if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+                    INTERSECTED = intersects[0].object;
+                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                    INTERSECTED.material.emissive.setHex(0xff0000);
+
+                }
+
+            } else {
+
+                if (INTERSECTED) INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+
+                INTERSECTED = null;
+
+            }
+
+        }
 
         window.addEventListener('mousemove', onMouseMove, false);
         window.addEventListener('click', onClick, false);
